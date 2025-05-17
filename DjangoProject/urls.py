@@ -22,5 +22,6 @@ from DjangoProject.models import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('model/', views.hello, name='hello'),
+    path('reset/', views.reset, name='reset'),
 
 ]
