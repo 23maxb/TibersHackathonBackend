@@ -3,6 +3,7 @@ import json
 from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 import os
 from django.views.decorators.csrf import csrf_exempt
+import tensorflow as tf
 
 
 def is_image_file(filename):
@@ -59,14 +60,29 @@ def hello(request):
         return JsonResponse(
             {
                 "status": "success",
-                "id": (upload_counter)
+                "id": upload_counter
             }
         )
     return HttpResponseBadRequest("Only POST with a file is accepted.\n")
 
 
-def runModel(id):
-    print('hi')
+import numpy as np
+from tensorflow.keras.preprocessing import image
+
+
+def runModel(idOfImage):
+    # Find the file with the given id
+    for filename in os.listdir('downloads'):
+        if filename.startswith(str(idOfImage) + '_'):
+            file = os.path.join('downloads', filename)
+            model = tf.keras.models.load_model(os.path.join('DjangoProject', 'models', 'modelstomachcancer.h5'))
+            img = image.load_img(file, target_size=(300, 300))
+            img_array = image.img_to_array(img)
+            img_array = np.expand_dims(img_array, axis=0)
+            img_array = img_array / 255.0
+            result = model.predict(img_array)
+            return result.tolist()  # Convert numpy array to list for JSON serialization
+    return None  # If file not found    
 
 
 @csrf_exempt

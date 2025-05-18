@@ -6,4 +6,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^model/?$', views.hello, name='hello'),
     re_path(r'^reset/?$', views.reset, name='reset'),
+    re_path(r'^predict/?$', views.predict, name='predict')
 ]
